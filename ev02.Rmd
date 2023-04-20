@@ -1,0 +1,538 @@
+---
+title: "Evidencia 2"
+author: 'Ricardo Camacho Castillo '
+date: "29/4/2021"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Para comenzar con el Trabajo, empezamos cargando los paquetes necesarios.
+
+```
+packageVersion("ape")
+packageVersion("phangorn")
+packageVersion("phytools")
+packageVersion("geiger")
+library(phytools)
+library(Biostrings)
+library(seqinr)
+library(adegenet)
+library(ape)
+library(ggtree)
+library(DECIPHER)
+library(viridis)
+library(ggplot2)
+library(ggmsa)
+library('stringr')
+if (!require(tidyverse)) install.packages("tidyverse", repos = "https://cloud.r-project.org")
+```
+
+```{r include=FALSE}
+packageVersion("ape")
+packageVersion("phangorn")
+packageVersion("phytools")
+packageVersion("geiger")
+library(phytools)
+library(Biostrings)
+library(seqinr)
+library(adegenet)
+library(ape)
+library(ggtree)
+library(DECIPHER)
+library(viridis)
+library(ggplot2)
+library(ggmsa)
+library('stringr')
+if (!require(tidyverse)) install.packages("tidyverse", repos = "https://cloud.r-project.org")
+```
+
+La Zoonosis son enfermedades infecciosas que se pueden transmitir naturalmente hacia el ser humano desde animales vertebrados.
+
+Como ya sabemos, hoy en día los hombres y animales conviven mucho. Gracias a esto y también al aumento de la movilización y la actividad comercial con animales, ha propiciado una mayor diseminación de las zoonosis. La zoonosis no solo ocasiona enfermedades hacia las personas causando dañño a la salud pública, sino que también severas pérdidas económicas, lo cual podemos ver hoy en día en todo el mundo. Gracias al SARS-Cov-2 muchos negocios y empresas han quebrado y desaaprecido. Muchas otras la han pasado muy mal y esto afecta gravemmente a las regiones y a la economía del país.
+
+Esta diseminación de enfermedades puede ser impulsada aún más gracias a la modernización de las prácticas agrícolas. Esto sucede justamente en áreas que son más propensas a la destrucción del hábitat natural, la invasión humana, y como en todo el mundo esta sucediendo, el cambio climático.
+
+Como ya se está haciendo un porblema muy grave y muy común, se cree que se necesita intervención y control en la fuente animal para evitar muchos problemas, justo como el que pasó en diciembre del 2019. 
+
+Para esto, el Centro Panamericano de Fiebre Aftosa y Salud Pública Veterinaria (PANAFTOSA/SPV) proporciona a países en América cooperación técnico-científica para así poder fortalecer y desarrollar todos los programas que existan de control y erradicación de las principales zoonosis que han impactado y que sigan impactando en la salud humana.
+
+Hasta el día de hoy más de 200 zoonosis y enfermedades han sido conocidas desde hace ya varios siglos, en las cuales se involucran todo tipo de agentes, entre los cuales se encuentran bacterias, parásitos, virus y agentes no convencionales.
+
+Algunos ejemplos de zoonosis pueden ser:
+
+* Rabia
+* Brucelosis
+* Ántrax
+* Cisticercosis
+* Influenza aviar
+* Leishmaniasis
+* Rickettsiosis
+* Toxoplasmosis
+* Tuberculosis bovina	
+* Leptospirosis
+
+En este caso hablaremos de los coronavirus reportados en otras especies cercanas al SARS-Cov-2. Usaremos este árbol filógenético como referencia sacado de PUBMED.
+
+![Árbol Coronavirus](arbol.png)
+Analizando el árbol podemos ver que nosotros nos encontramos en el Betacoronavirus, en una rama en la cual existen varios coronavirus de diferentes animales, mismos que vamos a analizar.
+
+
+1. Bat coronavirus (EF065511) 
+2. Pipistrellus abramus bat coronavirus (MN611520)
+3. Pipistrellus abramus bat coronavirus (KJ473820) 
+4. Tylonycteris pachypus bat coronavirus (KJ473822)
+5. Myotis daubentonii bat coronavirus (KU182965) 
+6. Vespertilio sinensis bat coronavirus (KJ473821) 
+7. Hypsugo bat coronavirus (KX442564)
+8. Erinaceus hedgehog coronavirus (MK907287)
+9. Paradoxurus hermaphroditus SARS (AY613948) 
+10. Civet SARS (AY572038) 
+11. Paguma larvata SARS (AY515512) 
+12. Rhinolophus sinicus bat coronavirus (KY417150) 
+13. Aselliscus stoliczkanus bat coronavirus (KY417142) 
+14. Rousettus bat coronavirus (NC_030886)
+15. Rabbit coronavirus (JN874560) 
+16. Canine respiratory coronavirus (KX432213)  
+17. Yak coronavirus (MH810163)
+18. Porcine hemagglutinating encephalomyelitis virus (KY994645) 
+19. Rattus norvegicus  Betacoronavirus HKU24 (KM349742)
+
+Como podemos ver, analizando los nombres, tres de los del betacoronavirus eran del humano, por lo tanto no se tomaron en cuenta. También podemos notar que muchos de estos parecidos al SARS-Cov-2 son en su mayoría de la familia de murciélagos y varios tipos de civetas, hay otros no tan comunes como el cuerpoespin, la rata, el yak, el conejo, así como también el perro y el cerdo, los cuales aparecen menos de dos veces.
+
+Para hacer la gráfica de comparación descargaremos los archivos Fasta
+
+```{r}
+EF065511 <- read.fasta('fasta_virus/EF065511')
+MN611520 <- read.fasta('fasta_virus/MN611520')
+KJ473820<- read.fasta('fasta_virus/KJ473820')
+KJ473822 <- read.fasta('fasta_virus/KJ473822')
+KU182965 <- read.fasta('fasta_virus/KU182965')
+KJ473821<- read.fasta('fasta_virus/KJ473821')
+KX442564 <- read.fasta('fasta_virus/KX442564')
+MK907287 <- read.fasta('fasta_virus/MK907287')
+AY613948<- read.fasta('fasta_virus/AY613948')
+AY572038 <- read.fasta('fasta_virus/AY572038')
+AY515512 <- read.fasta('fasta_virus/AY515512')
+KY417150<- read.fasta('fasta_virus/KY417150')
+KY417142<- read.fasta('fasta_virus/KY417142')
+NC_030886 <- read.fasta('fasta_virus/NC_030886')
+JN874560 <- read.fasta('fasta_virus/JN874560')
+KX432213<- read.fasta('fasta_virus/KX432213')
+MH810163 <- read.fasta('fasta_virus/MH810163')
+KY994645 <- read.fasta('fasta_virus/KY994645')
+KM349742 <- read.fasta('fasta_virus/KM349742')
+
+EF065511 <- EF065511$EF065511.1
+MN611520 <-MN611520$MN611520.1
+KJ473820<- KJ473820$KJ473820.1
+KJ473822 <-KJ473822$KJ473822.1
+KU182965 <-KU182965$KU182965.1
+KJ473821<- KJ473821$KJ473821.1
+KX442564 <-KX442564$KX442564.1
+MK907287 <-MK907287$MK907287.1
+AY613948<- AY613948$AY613948.1
+AY572038 <- AY572038$AY572038.1
+AY515512 <- AY515512$AY515512.1
+KY417150<-KY417150$KY417150.1
+KY417142<- KY417142$KY417142.1
+NC_030886 <- NC_030886$NC_030886.1
+JN874560 <- JN874560$JN874560.1
+KX432213<- KX432213$KX432213.1
+MH810163 <- MH810163$MH810163.1
+KY994645 <- KY994645$KY994645.1
+KM349742 <- KM349742$KM349742.1
+```
+
+## Longitud de las secuencias
+Para calcular la longitud de las secuencias usamos la función lenght y se la aplicamos a cada una de las secuencias a analizar
+
+```{r}
+sprintf('El tamaño de la secuencia del virus de EF065511 es de %s',length(EF065511))
+sprintf('El tamaño de la secuencia del virus de MN611520 es de %s',length(MN611520))
+sprintf('El tamaño de la secuencia del virus de KJ473820 es de %s',length(KJ473820))
+sprintf('El tamaño de la secuencia del virus de KJ473822 es de %s',length(KJ473822))
+sprintf('El tamaño de la secuencia del virus de KU182965 es de %s',length(KU182965))
+sprintf('El tamaño de la secuencia del virus de KJ473821 es de %s',length(KJ473821))
+sprintf('El tamaño de la secuencia del virus de KX442564 es de %s',length(KX442564))
+sprintf('El tamaño de la secuencia del virus de MK907287 es de %s',length(MK907287))
+sprintf('El tamaño de la secuencia del virus de AY613948 es de %s',length(AY613948))
+sprintf('El tamaño de la secuencia del virus de AY572038 es de %s',length(AY572038))
+sprintf('El tamaño de la secuencia del virus de AY515512 es de %s',length(AY515512))
+sprintf('El tamaño de la secuencia del virus de KY417150 es de %s',length(KY417150))
+sprintf('El tamaño de la secuencia del virus de KY417142 es de %s',length(KY417142))
+sprintf('El tamaño de la secuencia del virus de NC_030886 es de %s',length(NC_030886))
+sprintf('El tamaño de la secuencia del virus de JN874560 es de %s',length(JN874560))
+sprintf('El tamaño de la secuencia del virus de KX432213 es de %s',length(KX432213))
+sprintf('El tamaño de la secuencia del virus de MH810163 es de %s',length(MH810163))
+sprintf('El tamaño de la secuencia del virus de KY994645 es de %s',length(KY994645))
+sprintf('El tamaño de la secuencia del virus de KM349742 es de %s',length(KM349742))
+
+
+```
+ 
+ ## Convertir  data.frame para poder juntar y graficar.
+ 
+```{r}
+EF065511 <- as.data.frame(table(EF065511))
+MN611520 <-as.data.frame(table(MN611520))
+KJ473820<- as.data.frame(table(KJ473820))
+KJ473822 <-as.data.frame(table(KJ473822))
+KU182965 <-as.data.frame(table(KU182965))
+KJ473821<- as.data.frame(table(KJ473821))
+KX442564 <-as.data.frame(table(KX442564))
+MK907287 <-as.data.frame(table(MK907287))
+AY613948<- as.data.frame(table(AY613948))
+AY572038 <- as.data.frame(table(AY572038))
+AY515512 <- as.data.frame(table(AY515512))
+KY417150<-as.data.frame(table(KY417150))
+KY417142<- as.data.frame(table(KY417142))
+NC_030886 <- as.data.frame(table(NC_030886))
+JN874560 <- as.data.frame(table(JN874560))
+KX432213<- as.data.frame(table(KX432213))
+MH810163 <- as.data.frame(table(MH810163))
+KY994645 <- as.data.frame(table(KY994645))
+KM349742 <- as.data.frame(table(KM349742))
+```
+
+Agregar columna con el nombre del virus para poder identificarlo, así como también agregarle una columna de nombres para poder juntar todos.
+
+```{r}
+EF065511 <- cbind(EF065511, nombre='Bat_coronavirus_HKU5-3')
+names(EF065511)<-c('Bases','Cantidad','Virus')
+
+MN611520 <-cbind(MN611520, nombre='Pipistrellus_bat_coronavirus')
+names(MN611520)<-c('Bases','Cantidad','Virus')
+
+KJ473820<- cbind(KJ473820, nombre='BtPa-BetaCoV/GD2013')
+names(KJ473820)<-c('Bases','Cantidad','Virus')
+
+KJ473822 <-cbind(KJ473822, nombre='BtTp-BetaCoV/GX2012')
+names(KJ473822)<-c('Bases','Cantidad','Virus')
+
+KU182965 <-cbind(KU182965, nombre='Bat_coronavirus')
+names(KU182965)<-c('Bases','Cantidad','Virus')
+
+KJ473821<- cbind(KJ473821, nombre='BtVs-BetaCoV/SC2013')
+names(KJ473821)<-c(c('Bases','Cantidad','Virus'))
+
+KX442564 <-cbind(KX442564, nombre='Hypsugo_bat_coronavirus_HKU25')
+names(KX442564)<-c('Bases','Cantidad','Virus')
+
+MK907287 <-cbind(MK907287, nombre='Erinaceus_hedgehog_coronavirus')
+names(MK907287)<-c('Bases','Cantidad','Virus')
+
+AY613948<- cbind(AY613948, nombre='SARS_coronavirus_PC4-13')
+names(AY613948)<-c('Bases','Cantidad','Virus')
+
+AY572038 <- cbind(AY572038, nombre='SARS_coronavirus_civet020')
+names(AY572038)<-c('Bases','Cantidad','Virus')
+
+AY515512 <- cbind(AY515512, nombre='SARS_coronavirus_HC/SZ/61/03')
+names(AY515512)<-c('Bases','Cantidad','Virus')
+
+KY417150<- cbind(KY417150, nombre='Bat_SARS-like_coronavirus')
+names(KY417150)<-c('Bases','Cantidad','Virus')
+
+KY417142<- cbind(KY417142, nombre='Bat_SARS-like_coronavirus')
+names(KY417142)<-c('Bases','Cantidad','Virus')
+
+NC_030886 <- cbind(NC_030886, nombre='Rousettus_bat_coronavirus')
+names(NC_030886)<-c('Bases','Cantidad','Virus')
+
+JN874560 <- cbind(JN874560, nombre='Rabbit_coronavirus_HKU14')
+names(JN874560)<-c('Bases','Cantidad','Virus')
+
+KX432213<- cbind(KX432213, nombre='Canine_respiratory_coronavirus')
+names(KX432213)<-c('Bases','Cantidad','Virus')
+
+MH810163 <- cbind(MH810163, nombre='Yak_coronavirus')
+names(MH810163)<-c('Bases','Cantidad','Virus')
+
+KY994645 <- cbind(KY994645, nombre='Porcine_encephalomyelitis_virus')
+names(KY994645)<-c('Bases','Cantidad','Virus')
+
+KM349742 <- cbind(KM349742, nombre='Betacoronavirus_HKU24')
+names(KM349742)<-c('Bases','Cantidad','Virus')
+```
+
+Después de tener las mismas etiquetas, procedemos a juntar los dataframes en uno solo.
+
+```{r}
+animales_secuencias<-rbind( EF065511, MN611520, KJ473820, KJ473822, KU182965, KJ473821,KX442564,MK907287, AY613948, AY572038,AY515512,KY417150, KY417142, NC_030886,JN874560,KX432213, MH810163, KY994645,KM349742)
+```
+
+Ya que tenemos las secuencias de las variantes juntas, y clasificadas por bases, procedemos a graficarlas.
+
+```{r}
+ggplot(data = animales_secuencias) +
+  geom_col( mapping = aes(Bases,Cantidad, fill = Virus),#eje x y y, así como marcar los datos por colores conforme al país
+            position = position_dodge(width=0.92)) + #posición para que los ponga lado a lado 
+          theme_bw() + #tema gráfica 
+          ggtitle('Gráfica de Comparación de Bases') #título gráfica
+         
+```
+
+Gráfica Usando datos de GenBank
+
+```{r}
+virus.2<-read.fasta('seq_animal_virus.fasta')
+v.1<-as.data.frame(table(virus.2$EF065511))[-1,]
+v.2<-as.data.frame(table(virus.2$MN611520))[-1,]
+v.3<-as.data.frame(table(virus.2$KJ473820))[-1,]
+v.4<-as.data.frame(table(virus.2$KJ473822))[-1,]
+v.5<-as.data.frame(table(virus.2$KU182965))[-1,]
+v.6<-as.data.frame(table(virus.2$KJ473821))[-1,]
+v.7<-as.data.frame(table(virus.2$KX442564))[-1,]
+v.8<-as.data.frame(table(virus.2$MK907287))[-1,]
+v.9<-as.data.frame(table(virus.2$AY613948))[-1,]
+v.10<-as.data.frame(table(virus.2$AY572038))[-1,]
+v.11<-as.data.frame(table(virus.2$AY515512))[-1,]
+v.12<-as.data.frame(table(virus.2$KY417150))[-1,]
+v.13<-as.data.frame(table(virus.2$KY417142))[-1,]
+v.14<-as.data.frame(table(virus.2$NC_030886))[-1,]
+v.15<-as.data.frame(table(virus.2$JN874560))[-1,]
+v.16<-as.data.frame(table(virus.2$KX432213))[-1,]
+v.17<-as.data.frame(table(virus.2$MH810163))[-1,]
+v.18<-as.data.frame(table(virus.2$KY994645))[-1,]
+v.19<-as.data.frame(table(virus.2$KM349742))[-1,]
+
+v.1 <- cbind(v.1, nombre='EF065511-3')
+names(v.1)<-c('Bases','Cantidad','Virus')
+
+v.2 <-cbind(v.2, nombre='MN611520')
+names(v.2)<-c('Bases','Cantidad','Virus')
+
+v.3<- cbind(v.3, nombre='KJ473820')
+names(v.3)<-c('Bases','Cantidad','Virus')
+
+v.4 <-cbind(v.4, nombre='KJ473822')
+names(v.4)<-c('Bases','Cantidad','Virus')
+
+v.5 <-cbind(v.5, nombre='KU182965')
+names(v.5)<-c('Bases','Cantidad','Virus')
+
+v.6<- cbind(v.6, nombre='KJ473821')
+names(v.6)<-c(c('Bases','Cantidad','Virus'))
+
+v.7 <-cbind(v.7, nombre='KX442564')
+names(v.7)<-c('Bases','Cantidad','Virus')
+
+v.8 <-cbind(v.8, nombre='MK907287')
+names(v.8)<-c('Bases','Cantidad','Virus')
+
+v.9<- cbind(v.9, nombre='AY613948')
+names(v.9)<-c('Bases','Cantidad','Virus')
+
+v.10 <- cbind(v.10, nombre='AY572038')
+names(v.10)<-c('Bases','Cantidad','Virus')
+
+v.11 <- cbind(v.11, nombre='AY515512')
+names(v.11)<-c('Bases','Cantidad','Virus')
+
+v.12<- cbind(v.12, nombre='KY417150')
+names(v.12)<-c('Bases','Cantidad','Virus')
+
+v.13<- cbind(v.13, nombre='KY417142')
+names(v.13)<-c('Bases','Cantidad','Virus')
+
+v.14 <- cbind(v.14, nombre='NC_030886')
+names(v.14)<-c('Bases','Cantidad','Virus')
+
+v.15 <- cbind(v.15, nombre='JN874560')
+names(v.15)<-c('Bases','Cantidad','Virus')
+
+v.16<- cbind(v.16, nombre='KX432213')
+names(v.16)<-c('Bases','Cantidad','Virus')
+
+v.17 <- cbind(v.17, nombre='MH810163')
+names(v.17)<-c('Bases','Cantidad','Virus')
+
+v.18 <- cbind(v.18, nombre='KY994645')
+names(v.18)<-c('Bases','Cantidad','Virus')
+
+v.19 <- cbind(v.19, nombre='KM349742')
+names(v.19)<-c('Bases','Cantidad','Virus')
+
+v.total<-rbind( v.1, v.2, v.3, v.4, v.5, v.6,v.7,v.8, v.9, v.10,v.11,v.12, v.13, v.14,v.15,v.16, v.17, v.18,v.19)
+
+ggplot(data = v.total) +
+  geom_col( mapping = aes(Bases,Cantidad, fill = Virus),#eje x y y, así como marcar los datos por colores conforme al país
+            position = position_dodge(width=0.92)) + #posición para que los ponga lado a lado 
+          theme_bw() + #tema gráfica 
+          ggtitle('Gráfica de Comparación de Bases GenBank') #título gráfica
+  
+```
+En esta gráfica podemos ver que las bases de todos los virus son muy parecidas ya que todas son del grupo Betacoronavirus. En este caso podemos observar que en la mayoría de los casos, los que más se parecen entre ellos son los que tienen que ver con el murciélago, y también los de las civetas, que son los virus que más abundan del mismo animal. Los demás ya van variando un poco ya que òr decirlo de una manera, no son de la misma familia, aunque en el árbol filógenético están en la misma rama.
+Podemos observar que cuando se trata de virus parecidos, en este caso, coronaviruses de varias especies, los números de bases no varían mucho, aunque en algunos casos si. 
+
+
+1. Cargaremos las secuencias de todas las variantes de los 19 diferentes coronavirus de animales que obtuvimos.
+
+```{r}
+variantes <- c(  "EF065511", "MN611520", "KJ473820", "KJ473822", "KU182965", "KJ473821","KX442564","MK907287", "AY613948", "AY572038","AY515512","KY417150", "KY417142", "NC_030886","JN874560","KX432213", "MH810163", "KY994645","KM349742")
+
+```
+
+
+2. Obtendremos las secuencias:
+
+```{r}
+seq.virus <- read.GenBank(variantes)
+```
+
+3. Obtemos la estructura del ape::DNABin:
+
+```{r}
+str(seq.virus)
+```
+
+```{r}
+attr(seq.virus, "species")
+```
+
+4. Concentraremos todas las secuencias en un mismo archivo fasta. 
+
+```{r}
+write.dna(seq.virus, 
+		  file ="seq_animal_virus.fasta",
+		  format = "fasta",
+		  append = FALSE,
+		  nbcol = 6, 
+		  colsep = " ",
+		  colw = 10)
+```
+
+5. Cargamos la secuencias (Biostrings::DNAStringSet):
+
+```{r}
+seq_no_alineadas <- readDNAStringSet("seq_animal_virus.fasta", format = "fasta")
+seq_no_alineadas
+```
+
+6. Alineamiento de las secuencias:
+
+```{r}
+seq_no_alineadas <- OrientNucleotides(seq_no_alineadas)
+```
+
+```{r}
+seq_alineadas <- AlignSeqs(seq_no_alineadas)
+```
+
+7. Visualizar el resultado del alineamiento:
+
+```{r}
+BrowseSeqs(seq_alineadas, highlight = 0)
+```
+
+8. Guardar el resultado:
+
+```{r}
+writeXStringSet(seq_alineadas, file = "seq_virus_animal_alineadas.fasta")
+```
+
+9. Obtener el nuevo archivo (seqinr::alignment):
+
+```{r}
+virus_alineados <- read.alignment("seq_virus_animal_alineadas.fasta", format = "fasta") 
+```
+
+10. Crear una matriz de distancia:
+
+```{r}
+matrix_distance <- dist.alignment(virus_alineados, matrix = "similarity")
+matrix_distance
+```
+11. Visualiza la matriz de distancia: donde sombras más oscuras de gris significan una mayor distancia
+
+```{r}
+tempperatura <- as.data.frame(as.matrix(matrix_distance))
+tempperatura
+table.paint(tempperatura, cleg=0, clabel.row=.5, clabel.col=.5) + scale_color_viridis()
+```
+
+12. Creación del árbol con el paquete ape:
+
+```{r}
+virus_animal_tree <- nj(matrix_distance)
+virus_animal_tree
+class(virus_animal_tree)
+```
+
+13. Plot del árbol:
+
+```{r}
+virus_animal_tree <- ladderize(virus_animal_tree)
+plot(virus_animal_tree, cex = 0.5)
+title("Zoonosis SARS-Cov-2")
+```
+14. Plot utilizando ggtree que es parte de ggplot:
+
+
+```{r}
+ggtree(virus_animal_tree)
+ggtree(virus_animal_tree, layout="slanted") 
+ggtree(virus_animal_tree, layout="circular")
+ggtree(virus_animal_tree, layout="fan", open.angle=120)
+ggtree(virus_animal_tree, layout="equal_angle")
+ggtree(virus_animal_tree, branch.length='none')
+ggtree(virus_animal_tree, branch.length='none', layout='circular')
+ggtree(virus_animal_tree) + geom_tiplab()
+```
+
+15. Visualiza el alineamiento de las secuencias:
+
+```{r}
+library(ggmsa)
+ggmsa(seq_no_alineadas, 320, 360, color = "Chemistry_AA")
+ggmsa(seq_alineadas, 320, 360, color = "Chemistry_AA")
+```
+
+16. Combina el árbol filogenético con el alineamiento de las secuencias:
+
+```{r}
+plot_virus <- ggtree(virus_animal_tree) + geom_tiplab()
+
+data = tidy_msa(seq_alineadas, 164, 213)
+plot_virus + geom_facet(geom = geom_msa,
+						data = data,
+						panel = 'msa',
+						color = "Chemistry_AA") #+
+		    xlim_tree(1)
+```
+
+
+## COnclusión
+
+Con las alineaciones de secuencias, podemos darnos cuenta que, ya haciendo el árbol filogenético, se aprecen mucho unas entre otras, y aunque no todas son iguales, tienen muchísimas similaridades. Observando el resultado que obtuvimos, y al compararlo con el árbol que obtuvimos en PUBMED, podemos ver que efectivamente, aunque no en el mismo orden, son iguales. Al ver las cadenas alineadas podemos darnos cuenta que efectivamente, pertenecen a la misma familia de coronavirus, el betacoronavirus, y que efectivamente, al ser estos muy parecidos, y al ser estos animales que conviven bastante con el ser humano, el fenómeno de la zoonosis es posible. 
+
+Después de analizar todo, podemos concluir que es importante cuidarnos, ya que en cualquier otro momento, un virus puede mutar y pasar al ser humano, provocando otra pandemia. Es importante entender que no todos los animales son domésticos, o son para el consumo humano, y que sí, aunque a veces la gente le de por comer animales exóticos, hay que cuidar por lo menos su procedencia, y no solo por el bien de la persona que consume, sino por el bien de la humanidad, ya que en cualquier momento podría desatarse otra pandemia. 
+
+## Referencias:
+
+```{r}
+citation("dplyr")
+```
+
+Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2021). dplyr: A
+  Grammar of Data Manipulation. R package version 1.0.5.
+  https://CRAN.R-project.org/package=dplyr
+
+Li C, Yang Y, Ren L. Genetic evolution analysis of 2019 novel coronavirus and coronavirus from other species. Infect Genet Evol. 2020 Aug;82:104285. doi: 10.1016/j.meegid.2020.104285. Epub 2020 Mar 10. Erratum in: Infect Genet Evol. 2020 Oct 22;:104605. PMID: 32169673; PMCID: PMC7270525.
+
+Human coronavirus types. (2020, February 27). Centers for Disease Control and Prevention. https://www.cdc.gov/coronavirus/types.html
+
+Human Coronavirus-229E, -OC43, -NL63, and -HKU1 (Coronaviridae). (n.d.). PubMed Central (PMC). https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7204879/
+
+Ministerio de Salud y Protección Social de Colombia. (n.d.). Páginas - Zoonosis. Más información del Coronavirus COVID-19. https://www.minsalud.gov.co/salud/Paginas/Zoonosis%20y%20cuidado%20de%20mascotas.aspx
+
+(n.d.). SAGE Journals: Your gateway to world-class research journals. https://journals.sagepub.com/doi/pdf/10.3181/0903-MR-94
+
+Zoonosis - OPS/OMS | Organización Panamericana de la Salud. (n.d.). https://www.paho.org/es/temas/zoonosis
+
+¿Que son los coronavirus? (n.d.). Instituto Nacional de Salud Pública. https://www.insp.mx/nuevo-coronavirus-2019/que-es-nuevo-coronavirus.html
+
